@@ -1,15 +1,10 @@
-<!DOCTYPE html>
-<html>
-  <head><title>BiasMirror</title></head>
-  <body>
-    <button id="analyze">Analyze Bias</button>
-
-    <script>
-      document.getElementById("analyze").addEventListener("click", () => {
-        chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-          chrome.tabs.sendMessage(tabs[0].id, { action: "analyze" });
-        });
-      });
-    </script>
-  </body>
-</html>
+<button id="analyze">Analyze Bias</button>
+<script>
+  document.getElementById("analyze").addEventListener("click", () => {
+    console.log("Analyze button clicked"); // Confirm button works
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      console.log("Sending message to tab:", tabs[0].id); // Confirm tab found
+      chrome.tabs.sendMessage(tabs[0].id, { action: "analyze" });
+    });
+  });
+</script>
