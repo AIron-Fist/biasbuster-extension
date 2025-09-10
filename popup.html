@@ -1,39 +1,28 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>BiasMirror</title>
+    <title>Test Popup</title>
     <style>
-      body {
-        font-family: sans-serif;
-        padding: 20px;
-        width: 200px;
-      }
-      #analyze {
-        padding: 10px 20px;
+      button {
+        padding: 10px;
         font-size: 16px;
-        background-color: #4CAF50;
+        background-color: #007bff;
         color: white;
         border: none;
-        border-radius: 5px;
+        border-radius: 4px;
         cursor: pointer;
-        width: 100%;
-      }
-      #analyze:hover {
-        background-color: #45a049;
       }
     </style>
   </head>
   <body>
-    <button id="analyze">Analyze Bias</button>
+    <button id="testButton">Click Me</button>
 
     <script>
       document.addEventListener("DOMContentLoaded", () => {
-        const button = document.getElementById("analyze");
-        button.addEventListener("click", () => {
-          console.log("Analyze button clicked");
+        document.getElementById("testButton").addEventListener("click", () => {
+          console.log("Button clicked");
           chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-            console.log("Sending message to tab:", tabs[0].id);
-            chrome.tabs.sendMessage(tabs[0].id, { action: "analyze" });
+            chrome.tabs.sendMessage(tabs[0].id, { action: "test" });
           });
         });
       });
