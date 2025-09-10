@@ -1,14 +1,17 @@
-
 console.log("Content script loaded");
 
 chrome.runtime.onMessage.addListener((msg) => {
   console.log("Message received:", msg);
+
   if (msg.action === "test") {
     alert("Test message received!");
   }
+
+  if (msg.action === "analyze") {
+    const pageText = document.body.innerText.slice(0, 5000); // Limit input size
+    analyzeBias(pageText);
+  }
 });
-
-
 
 async function checkModelAvailability() {
   const status = await LanguageModel.availability();
@@ -39,12 +42,3 @@ async function analyzeBias(text) {
     alert("Model not available or still downloading.");
   }
 }
-
-// Trigger analysis when user clicks the extension button
-chrome.runtime.onMessage.addListener((msg) => {
-  if (msg.action === "analyze") {
-    const pageText = document.body.innerText.slice(0, 5000); // Limit input size
-    analyzeBias(pageText);
-  }
-});
-
