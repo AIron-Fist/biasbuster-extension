@@ -1,44 +1,13 @@
-console.log("Content script loaded");
-
 chrome.runtime.onMessage.addListener((msg) => {
-  console.log("Message received:", msg);
-
-  if (msg.action === "test") {
-    alert("Test message received!");
-  }
-
   if (msg.action === "analyze") {
-    const pageText = document.body.innerText.slice(0, 5000); // Limit input size
-    analyzeBias(pageText);
+    const pageText = document.body.innerText.slice(0, 5000);
+
+    chrome.runtime.sendMessage({ action: "analyze", text: pageText }, (response) => {
+      if (response.error) {
+        alert("Error: " + response.error);
+      } else {
+        alert("Bias analysis result:\n" + response.result);
+      }
+    });
   }
 });
-
-async function checkModelAvailability() {
-  const status = await LanguageModel.availability();
-  console.log("Model status:", status);
-  return status;
-}
-
-async function createSession() {
-  const session = await LanguageModel.create({
-    initialPrompts: [
-      {
-        role: "system",
-        content: "You are a bias detection assistant. Identify cognitive biases in user text."
-      }
-    ]
-  });
-  return session;
-}
-
-async function analyzeBias(text) {
-  const available = await checkModelAvailability();
-  if (available === "available") {
-    const session = await createSession();
-    const result = await session.prompt(`Analyze this for cognitive bias: ${text}`);
-    console.log("Bias analysis result:", result);
-    alert(result);
-  } else {
-    alert("Model not available or still downloading.");
-  }
-}
