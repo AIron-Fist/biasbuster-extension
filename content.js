@@ -1,9 +1,10 @@
-console.log("BiasMirror content script loaded");
-chrome.runtime.onMessage.addListener((msg, sender, response) => {
-  if (msg.action === "analyze") {
-    alert("Bias analysis triggered!");
-    const text = document.body.innerText;
-    console.log("Analyzing text:", text);
+
+console.log("Content script loaded");
+
+chrome.runtime.onMessage.addListener((msg) => {
+  console.log("Message received:", msg);
+  if (msg.action === "test") {
+    alert("Test message received!");
   }
 });
 
