@@ -1,8 +1,8 @@
-<!DOCTYPE html>
-<html>
-  <head><title>BiasMirror</title></head>
-  <body>
-    <h1>BiasMirror</h1>
-    <button id="analyze">Analyze Page</button>
-  </body>
-</html>
+<button id="analyze">Analyze Bias</button>
+<script>
+  document.getElementById("analyze").onclick = () => {
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      chrome.tabs.sendMessage(tabs[0].id, { action: "analyze" });
+    });
+  };
+</script>
