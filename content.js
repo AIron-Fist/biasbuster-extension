@@ -1,10 +1,11 @@
 chrome.runtime.onMessage.addListener((msg, sender, response) => {
   if (msg.action === "analyze") {
+    alert("Bias analysis triggered!");
     const text = document.body.innerText;
     console.log("Analyzing text:", text);
-    alert("Bias analysis triggered!"); // Add this line
   }
 });
+
 
 
 async function checkModelAvailability() {
