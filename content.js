@@ -7,10 +7,15 @@ chrome.runtime.onMessage.addListener((msg) => {
     chrome.runtime.sendMessage({ action: "analyze", text: pageText }, (response) => {
       if (chrome.runtime.lastError) {
         console.error("Runtime error:", chrome.runtime.lastError.message);
+        chrome.runtime.sendMessage({ action: "popupResponse", error: chrome.runtime.lastError.message });
         return;
       }
 
-      chrome.runtime.sendMessage({ action: "popupResponse", result: response?.result || "", error: response?.error || "" });
+      chrome.runtime.sendMessage({
+        action: "popupResponse",
+        result: response?.result || "",
+        error: response?.error || ""
+      });
     });
   }
 });
