@@ -1,14 +1,54 @@
 document.addEventListener("DOMContentLoaded", () => {
   const button = document.getElementById("analyze");
-  if (button) {
-    button.addEventListener("click", () => {
-      console.log("Analyze button clicked");
-      chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-        console.log("Sending message to tab:", tabs[0].id);
-        chrome.tabs.sendMessage(tabs[0].id, { action: "analyze" });
+  const resultsDiv = document.getElementById("results");
+  const biasTableBody = document.querySelector("#biasTable tbody");
+
+  button.addEventListener("click", () => {
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      chrome.tabs.sendMessage(tabs[0].id, { action: "analyze" }, (response) => {
+        if (chrome.runtime.lastError) {
+          alert("Error: " + chrome.runtime.lastError.message);
+          return;
+        }
+
+        if (!response || response.error) {
+          alert("Error: " + (response?.error || "No response received"));
+          return;
+        }
+
+        const biases = parseBiasResult(response.result);
+        biasTableBody.innerHTML = "";
+
+        biases.forEach(({ bias, evaluation, comment }) => {
+          const row = document.createElement("tr");
+          row.innerHTML = `
+            <td>${bias}</td>
+            <td>${evaluation}</td>
+            <td>${comment}</td>
+          `;
+          biasTableBody.appendChild(row);
+        });
+
+        resultsDiv.style.display = "block";
       });
     });
-  } else {
-    console.error("Button not found");
+  });
+
+  function parseBiasResult(text) {
+    const lines = text.split("\n").filter(line => line.trim());
+    const biases = [];
+
+    lines.forEach(line => {
+      const parts = line.split(" - ");
+      if (parts.length === 3) {
+        biases.push({
+          bias: parts[0].trim(),
+          evaluation: parts[1].trim(),
+          comment: parts[2].trim()
+        });
+      }
+    });
+
+    return biases;
   }
 });
