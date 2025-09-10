@@ -5,32 +5,40 @@ document.addEventListener("DOMContentLoaded", () => {
 
   button.addEventListener("click", () => {
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-      chrome.tabs.sendMessage(tabs[0].id, { action: "analyze" });
-    });
-  });
+      chrome.scripting.executeScript({
+        target: { tabId: tabs[0].id },
+        func: () => document.body.innerText.slice(0, 5000)
+      }, async (results) => {
+        const pageText = results[0].result;
 
-  chrome.runtime.onMessage.addListener((msg) => {
-    if (msg.action === "popupResponse") {
-      if (msg.error) {
-        alert("Error: " + msg.error);
-        return;
-      }
+        chrome.runtime.sendMessage({ action: "analyze", text: pageText }, (response) => {
+          if (chrome.runtime.lastError) {
+            alert("Error: " + chrome.runtime.lastError.message);
+            return;
+          }
 
-      const biases = parseBiasResult(msg.result);
-      biasTableBody.innerHTML = "";
+          if (!response || response.error) {
+            alert("Error: " + (response?.error || "No response received"));
+            return;
+          }
 
-      biases.forEach(({ bias, evaluation, comment }) => {
-        const row = document.createElement("tr");
-        row.innerHTML = `
-          <td>${bias}</td>
-          <td>${evaluation}</td>
-          <td>${comment}</td>
-        `;
-        biasTableBody.appendChild(row);
+          const biases = parseBiasResult(response.result);
+          biasTableBody.innerHTML = "";
+
+          biases.forEach(({ bias, evaluation, comment }) => {
+            const row = document.createElement("tr");
+            row.innerHTML = `
+              <td>${bias}</td>
+              <td>${evaluation}</td>
+              <td>${comment}</td>
+            `;
+            biasTableBody.appendChild(row);
+          });
+
+          resultsDiv.style.display = "block";
+        });
       });
-
-      resultsDiv.style.display = "block";
-    }
+    });
   });
 
   function parseBiasResult(text) {
