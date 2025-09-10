@@ -2,11 +2,6 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   if (msg.action === "analyze") {
     (async () => {
       try {
-        if (typeof LanguageModel === "undefined") {
-          sendResponse({ error: "LanguageModel API not available" });
-          return;
-        }
-
         const status = await LanguageModel.availability();
         console.log("Model status:", status);
 
@@ -25,12 +20,14 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
         });
 
         const result = await session.prompt(`Analyze this for cognitive bias: ${msg.text}`);
+        console.log("Model result:", result);
         sendResponse({ result });
       } catch (err) {
+        console.error("Model error:", err);
         sendResponse({ error: err.message });
       }
     })();
 
-    return true; // ✅ Keeps the message channel open for async response
+    return true;
   }
 });
