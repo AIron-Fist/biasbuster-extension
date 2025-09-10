@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", () => {
       chrome.scripting.executeScript({
         target: { tabId: tabs[0].id },
         func: () => document.body.innerText.slice(0, 5000)
-      }, async (results) => {
+      }, (results) => {
         const pageText = results[0].result;
 
         chrome.runtime.sendMessage({ action: "analyze", text: pageText }, (response) => {
