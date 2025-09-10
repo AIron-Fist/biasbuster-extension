@@ -1,3 +1,4 @@
+console.log("BiasMirror content script loaded");
 chrome.runtime.onMessage.addListener((msg, sender, response) => {
   if (msg.action === "analyze") {
     alert("Bias analysis triggered!");
