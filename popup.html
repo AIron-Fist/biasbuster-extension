@@ -5,9 +5,10 @@
     <style>
       body {
         font-family: sans-serif;
-        padding: 10px;
+        padding: 20px;
+        width: 200px;
       }
-      button {
+      #analyze {
         padding: 10px 20px;
         font-size: 16px;
         background-color: #4CAF50;
@@ -15,8 +16,9 @@
         border: none;
         border-radius: 5px;
         cursor: pointer;
+        width: 100%;
       }
-      button:hover {
+      #analyze:hover {
         background-color: #45a049;
       }
     </style>
@@ -25,11 +27,14 @@
     <button id="analyze">Analyze Bias</button>
 
     <script>
-      document.getElementById("analyze").addEventListener("click", () => {
-        console.log("Analyze button clicked");
-        chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-          console.log("Sending message to tab:", tabs[0].id);
-          chrome.tabs.sendMessage(tabs[0].id, { action: "analyze" });
+      document.addEventListener("DOMContentLoaded", () => {
+        const button = document.getElementById("analyze");
+        button.addEventListener("click", () => {
+          console.log("Analyze button clicked");
+          chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+            console.log("Sending message to tab:", tabs[0].id);
+            chrome.tabs.sendMessage(tabs[0].id, { action: "analyze" });
+          });
         });
       });
     </script>
