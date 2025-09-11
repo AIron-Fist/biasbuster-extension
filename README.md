@@ -39,7 +39,3 @@ BiasBuster is a Chrome extension that uses on-device AI to detect cognitive bias
 - **Chrome Built-in AI API** (`LanguageModel`)
 - **HTML/CSS** for UI
 
----
-
-## 📄 Example Output
-
